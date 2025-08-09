@@ -1,100 +1,68 @@
-# NCC Code Bot: Learning AI Engineering with Architectural Data
+# NCC 2022 RAG Building Advisor
 
-## Project Overview
+## Background
 
-This project is my personal endeavor to transition from a Data Scientist role into the field of AI Engineering. The idea for this project came from my partner, an architect, who frequently navigates the dense and complex National Construction Code (NCC). The core concept is to build a chatbot/information aggregation system that can make the vast amount of NCC code information more accessible and easily queryable.
+This project was created to address a common challenge faced by architects and construction professionals in Australia: quickly and accurately finding relevant information within the National Construction Code (NCC). My partner, an architect, often expressed frustration with the difficulty of navigating the dense and complex NCC documents to get timely advice.
 
-**This project is purely for learning, development, and personal exploration.** It is designed as a hands-on exercise to understand the practical aspects of building AI-powered applications, particularly focusing on Retrieval-Augmented Generation (RAG) principles and vector databases.
+This application is a learning project that demonstrates how to build a Retrieval-Augmented Generation (RAG) system to make the NCC more accessible. It uses a Flask web framework for the frontend and a parent-child chunking strategy to improve the quality of the retrieved information.
 
-## Motivation & Learning Goals
+## How it Works
 
-As a Data Scientist, I've worked extensively with data analysis, machine learning models, and predictive analytics. AI Engineering, however, brings a new set of challenges and skills related to deploying, maintaining, and scaling AI systems, especially those that leverage large language models (LLMs) and vector databases.
+The application works in the following steps:
 
-My key learning goals for this project include:
+1.  **Data Ingestion:** The application first ingests the NCC 2022 Volumes 1, 2, and 3 in PDF format.
+2.  **Parent-Child Chunking:** To improve the relevance of the retrieved context, the documents are split into two levels of chunks:
+    * **Parent Chunks:** Larger, more general chunks of text (e.g., 2000 characters).
+    * **Child Chunks:** Smaller, more specific chunks derived from the parent chunks (e.g., 400 characters).
+3.  **Vectorization:** The child chunks are then converted into numerical representations (embeddings) using a sentence transformer model and stored in a Chroma vector database. The parent chunks are stored separately.
+4.  **Retrieval:** When a user asks a question, the application queries the vector database to find the most relevant child chunks.
+5.  **Context Augmentation:** The application then retrieves the parent chunks associated with the top-ranked child chunks. This provides a broader and more complete context for the language model.
+6.  **Generation:** Finally, the user's question and the retrieved parent chunks are passed to a Large Language Model (LLM), which generates a human-readable answer.
 
-* **Data Ingestion & Preprocessing:** Mastering the extraction of structured and unstructured data from complex documents like PDFs.
-* **Text Chunking Strategies:** Understanding how to effectively break down large texts into manageable "chunks" for optimal retrieval.
-* **Embeddings & Vector Databases:** Gaining practical experience with creating and utilizing text embeddings, and storing them efficiently in vector databases (specifically ChromaDB).
-* **Retrieval-Augmented Generation (RAG) Fundamentals:** Building a system that can retrieve relevant information from a knowledge base before generating responses with an LLM (though LLM integration is a future, optional phase).
-* **API Integration & System Design:** Thinking about how different components of an AI system fit together and interact.
-* **Finetuning Language Models** Exploring the viability of fine tuning Open Source models and comparing the results to a RAG system for more complex guidance on the code.
+## How to Run the Application
 
-## Project Structure & Components
+1.  **Clone the repository:**
+    ```bash
+    git clone <repository_url>
+    cd <repository_directory>
+    ```
+2.  **Install the required Python packages:**
+    ```bash
+    pip install -r requirements.txt
+    Flask
+    PyMuPDF
+    langchain
+    langchain-community
+    chromadb
+    sentence-transformers
+    ```
+3.  **Download the NCC 2022 PDFs:**
+    * Create a directory named `ncc_pdfs`.
+    * Download the NCC 2022 Volumes 1, 2, and 3 from the [official ABCB website](https://ncc.abcb.gov.au/editions/ncc-2022).
+    * Place the downloaded PDF files in the `ncc_pdfs` directory.
+4.  **Run the Flask application:**
+    ```bash
+    python app.py
+    ```
+5.  **Open your web browser** and navigate to `http://127.0.0.1:5000`.
 
-This project is built incrementally, focusing on modularity.
+## Copyright and Distribution Advice
 
-### Core Components Implemented So Far:
+**This project is for educational and demonstrative purposes only.**
 
-1.  **PDF Downloader (`download_ncc.py`):**
-    * **Purpose:** Programmatically fetches the complete NCC series ZIP file from the ABCB website.
-    * **Functionality:** Downloads the ZIP, extracts PDF volumes, and saves them to a local directory (e.g., `NCC_PDFs`).
-3.  **PDF to ChromaDB Embedder (`embed_ncc.py`):**
-    * **Purpose:** The core ingestion pipeline.
-    * **Functionality:**
-        * Reads specified NCC PDF volumes.
-        * Chunks the PDFs page by page (each page becomes a separate document).
-        * Utilizes a local `HuggingFaceEmbeddings` model (`all-MiniLM-L6-v2`) to convert page content into numerical vectors (embeddings).
-        * Stores these embeddings and the corresponding text content in a persistent [Chroma](https://www.trychroma.com/) vector database (saved to `ncc_chroma_db` by default).
-4.  **ChromaDB Query Tool (`query_ncc_db.py`):**
-    * **Purpose:** To test the retrieval capabilities of the embedded data.
-    * **Functionality:**
-        * Loads the previously saved ChromaDB.
-        * Takes a user query.
-        * Performs a vector similarity search to find the most relevant NCC pages based on the query.
-        * Displays snippets of the retrieved content, along with source file and page number.
+The National Construction Code (NCC) is subject to copyright. The Australian Building Codes Board (ABCB) makes the NCC available under a **Creative Commons Attribution-NoDerivatives 4.0 International license**.
 
-### Technologies Used:
+This means:
 
-* **Python 3.x**
-* **`requests`**: For downloading files from the web.
-* **`zipfile`**: For handling ZIP archives.
-* **`os`**: For file system operations.
-* **`pypdf` (or `PyPDF2`)**: For robust PDF reading and parsing.
-* **`langchain`**: A framework for developing applications powered by LLMs, used here for document loading, embeddings integration, and vector store management.
-* **`langchain-community`**: Contains various integrations for LangChain.
-* **`langchain-chroma`**: The specific integration for ChromaDB with LangChain.
-* **`chromadb`**: The open-source vector database used for storing and querying embeddings.
-* **`sentence-transformers`**: Provides the local embedding model (`all-MiniLM-L6-v2`).
-* **`pycryptodome`**: Essential for handling encrypted PDF files, which some NCC versions might be.
+* **You are free to share** (copy and redistribute) the material in any medium or format.
+* **You must give appropriate credit**, provide a link to the license, and indicate if changes were made. You may do so in any reasonable manner, but not in any way that suggests the licensor endorses you or your use.
+* **You may not distribute the modified material.** If you remix, transform, or build upon the material, you may not distribute the modified material.
 
-## How to Get Started (For My Future Self)
+**Therefore, if you use or distribute this project, you must:**
 
-1.  **Clone this repository:** (Once it's in a repo)
-    `git clone [your-repo-url]`
-    `cd ncc-code-buddy`
-2.  **Set up a virtual environment** (recommended):
-    `python -m venv venv`
-    `source venv/bin/activate` (on Linux/macOS)
-    `.\venv\Scripts\activate` (on Windows)
-3.  **Install dependencies:**
-    `pip install -r requirements.txt` (or manually with `pip install pypdf requests zipfile langchain langchain-community langchain-chroma sentence-transformers chromadb pycryptodome`)
-4.  **Download NCC PDFs:**
-    * Run `python download_ncc.py`.
-    * **IMPORTANT:** You will need to manually find and input the direct download URL for the "Complete Series" ZIP file from the ABCB website ([https://ncc.abcb.gov.au/editions-national-construction-code](https://ncc.abcb.gov.au/editions-national-construction-code)). Right-click the download link and select "Copy Link Address."
-    * This will create an `NCC_Pdfs` directory with your extracted NCC volumes.
-5.  **Embed PDFs into ChromaDB:**
-    * Run `python embed_ncc.py`.
-    * When prompted, enter the exact filenames of your NCC volumes (e.g., `NCC 2022 Volume One.pdf,NCC 2022 Volume Two.pdf,NCC 2022 Volume Three.pdf`). Press Enter for default suggestions if applicable.
-    * This will create a `ncc_chroma_db` directory containing your embedded data.
-6.  **Query the Database:**
-    * Run `python query_ncc_db.py`.
-    * Enter your natural language questions about the NCC code.
-    * The script will retrieve and display relevant sections.
+* **Acknowledge the source of the NCC data:** The Australian Building Codes Board (ABCB).
+* **Include the copyright notice:** "© Commonwealth of Australia and the States and Territories of Australia 2022, published by the Australian Building Codes Board."
+* **Provide a link to the Creative Commons license:** [https://creativecommons.org/licenses/by-nd/4.0/](https://creativecommons.org/licenses/by-nd/4.0/)
+* **Do not modify the NCC content itself.** This application uses the NCC content verbatim for retrieval and generation.
 
-## Future Enhancements (AI Engineering Horizons)
-
-* **LLM Integration:** Connect the retrieved information to a large language model (LLM) (e.g., a local open-source LLM like Llama 3 via `ollama`, or an API-based LLM like OpenAI/Gemini) to generate coherent, conversational responses.
-* **Improved Chunking:** Experiment with more sophisticated chunking strategies beyond just page-by-page (e.g., semantic chunking, fixed-size with overlap, recursive character splitting).
-* **User Interface:** Develop a simple web-based UI (e.g., using Streamlit or Gradio) for a more interactive chatbot experience.
-* **Error Handling & Robustness:** Enhance error handling for corrupted PDFs, network issues, and edge cases.
-* **Metadata Utilization:** Leverage PDF metadata (e.g., chapters, sections) to improve search relevance.
-* **Performance Optimization:** Optimize embedding generation and search for larger datasets.
-* **Evaluation Metrics:** Establish metrics to evaluate the quality of retrieval and generated responses.
-
----
-
-## Important Note on NCC Copyright
-
-**The National Construction Code (NCC) is subject to copyright by the Commonwealth of Australia and the States and Territories of Australia, administered by the Australian Building Codes Board (ABCB).**
-
-This project is developed strictly for **personal learning, non-commercial research, and educational purposes only.** The NCC content downloaded and processed within this project will **NOT be publicly distributed, shared, or used for any commercial applications.** All processing and storage of NCC data will remain solely on my local machine for the duration of this learning project. Appropriate measures will be taken to ensure the NCC data is not inadvertently exposed or shared.
+**Disclaimer:** This application is not a substitute for professional advice. Always consult with a qualified building professional for specific building and construction matters. The creators of this application are not liable for any errors or omissions in the information provided.
