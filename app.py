@@ -1,36 +1,22 @@
-from flask import Flask, request, jsonify, render_template
+import gradio as gr
 from rag import rag_pipeline
 
-
-# --- Flask App Initialization ---
-app = Flask(__name__)
-
-# --- Flask Routes ---
-
-@app.route('/')
-def index():
-    """Renders the main HTML page."""
-    return render_template('index.html')
-
-@app.route('/ask', methods=['POST'])
-def ask():
-    """
-    Handles the user's question, retrieves relevant context,
-    and generates an answer.
-    """
-    data = request.get_json()
-    query = data.get("query")
-
+def ask(query):
     if not query:
-        return jsonify({"error": "No query provided."}), 400
-
-    # --- RAG Pipeline ---
+        return "No query provided."
     try:
         llm_response = rag_pipeline(query)
-        return jsonify({"answer": llm_response, "context": query})
-
+        return llm_response
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return f"Error: {str(e)}"
 
-if __name__ == '__main__':   
-    app.run(debug=True)
+iface = gr.Interface(
+    fn=ask,
+    inputs=gr.Textbox(lines=2, placeholder="Ask your question here..."),
+    outputs="text",
+    title="RAG Chatbot",
+    description="Ask a question and get an answer using the RAG pipeline."
+)
+
+if __name__ == '__main__':
+    iface.launch()
