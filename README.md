@@ -29,22 +29,16 @@ The application works in the following steps:
 2.  **Install the required Python packages:**
     ```bash
     pip install -r requirements.txt
-    Flask
-    PyMuPDF
-    langchain
-    langchain-community
-    chromadb
-    sentence-transformers
     ```
 3.  **Download the NCC 2022 PDFs:**
     * Create a directory named `ncc_pdfs`.
     * Download the NCC 2022 Volumes 1, 2, and 3 from the [official ABCB website](https://ncc.abcb.gov.au/editions/ncc-2022).
     * Place the downloaded PDF files in the `ncc_pdfs` directory.
-4.  **Run the Flask application:**
+4.  **Run the Gradio application:**
     ```bash
     python app.py
     ```
-5.  **Open your web browser** and navigate to `http://127.0.0.1:5000`.
+5.  **Open your web browser** and navigate to `http://127.0.0.1:7860`.
 
 ## Copyright and Distribution Advice
 
