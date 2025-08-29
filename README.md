@@ -4,7 +4,7 @@
 
 This project was created to address a common challenge faced by architects and construction professionals in Australia: quickly and accurately finding relevant information within the National Construction Code (NCC). My partner, an architect, often expressed frustration with the difficulty of navigating the dense and complex NCC documents to get timely advice.
 
-This application is a learning project that demonstrates how to build a Retrieval-Augmented Generation (RAG) system to make the NCC more accessible. It uses a Flask web framework for the frontend and a parent-child chunking strategy to improve the quality of the retrieved information.
+This application is a learning project that demonstrates how to build a Retrieval-Augmented Generation (RAG) system to make the NCC more accessible. It uses a Gradio framework for the frontend and a parent-child chunking strategy to improve the quality of the retrieved information.
 
 ## How it Works
 
@@ -23,8 +23,8 @@ The application works in the following steps:
 
 1.  **Clone the repository:**
     ```bash
-    git clone <repository_url>
-    cd <repository_directory>
+    git clone https://github.com/lucas-hudsn/ncc_chat.git
+    cd ncc_chat
     ```
 2.  **Install the required Python packages:**
     ```bash
